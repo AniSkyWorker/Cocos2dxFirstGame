@@ -5,7 +5,7 @@ class Pause : public cocos2d::Layer
 {
 public:
 	static cocos2d::Scene* CreateScene();
-	virtual bool init();
+	virtual bool init() override;
 
 	void InitMenu();
 	void InitLabels();

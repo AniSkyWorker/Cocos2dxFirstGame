@@ -9,11 +9,11 @@ public:
     AppDelegate();
     virtual ~AppDelegate();
 
-    virtual void initGLContextAttrs();
+    virtual void initGLContextAttrs() override;
 
-    virtual bool applicationDidFinishLaunching();
-    virtual void applicationDidEnterBackground();
-    virtual void applicationWillEnterForeground();
+    virtual bool applicationDidFinishLaunching() override;
+    virtual void applicationDidEnterBackground() override;
+    virtual void applicationWillEnterForeground() override;
 };
 
 

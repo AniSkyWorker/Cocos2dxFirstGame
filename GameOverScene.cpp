@@ -35,6 +35,8 @@ bool GameOver::init()
 
 void GameOver::ExitPause(cocos2d::Ref* pSender)
 {
+	(void)pSender;
+
 	Director::getInstance()->replaceScene(TransitionFlipX::create(1.0, GameScene::createScene()));
 }
 

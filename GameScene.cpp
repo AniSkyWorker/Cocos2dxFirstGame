@@ -9,6 +9,9 @@ USING_NS_CC;
 using namespace cocostudio::timeline;
 using namespace CocosDenshion;
 
+const int C_BOMBS_COUNT = 3;
+const int C_SCORE_INC = 10;
+
 Scene* GameScene::createScene()
 {
 	auto scene = Scene::createWithPhysics();
@@ -38,7 +41,7 @@ bool GameScene::init()
 	this->addChild(bg, -1);
 
 	schedule(CC_SCHEDULE_SELECTOR(GameScene::AddBombs), 3.0f);
-	schedule(CC_SCHEDULE_SELECTOR(GameScene::UpdateScore), 3.0f);
+	schedule(CC_SCHEDULE_SELECTOR(GameScene::IncrementScore), 3.0f);
 
 	InitPhysics();
 	InitTouch();
@@ -49,13 +52,9 @@ bool GameScene::init()
 	return true;
 }
 
-void GameScene::MoveFinished(Node* sender)
-{
-
-}
-
 void GameScene::PauseCallback(cocos2d::Ref* pSender)
 {
+	(void)pSender;
 	Director::getInstance()->pushScene(TransitionFlipX::create(1.0, Pause::CreateScene()));
 }
 
@@ -77,7 +76,9 @@ bool GameScene::OnCollision(PhysicsContact& contact)
 	{
 		return false;
 	}
-	SimpleAudioEngine::getInstance()->stopBackgroundMusic(); SimpleAudioEngine::getInstance()->playEffect("uh.wav");
+
+	SimpleAudioEngine::getInstance()->stopBackgroundMusic();
+	SimpleAudioEngine::getInstance()->playEffect("uh.wav");
 
 	UserDefault::getInstance()->setIntegerForKey("score", m_score);
 
@@ -117,6 +118,8 @@ void GameScene::MovePlayerIfPossible(float newX)
 
 void GameScene::MovePlayerByTouch(Touch* touch, Event* event)
 { 
+	(void)event;
+
 	auto touchLocation = touch->getLocation();
 
 	if (m_playerSpr->getBoundingBox().containsPoint(touchLocation))
@@ -127,11 +130,11 @@ void GameScene::MovePlayerByTouch(Touch* touch, Event* event)
 
 void GameScene::AddBombs(float dt)
 {
-	Sprite* bomb = nullptr;
+	(void)dt;
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < C_BOMBS_COUNT; i++)
 	{
-		bomb = Sprite::create("bomb.png");
+		Sprite* bomb = Sprite::create("bomb.png");
 		
 		bomb->setPosition(CCRANDOM_0_1() * m_visibleSize.width, m_visibleSize.height + bomb->getContentSize().height / 2);
 		this->addChild(bomb, 1);
@@ -143,9 +146,11 @@ void GameScene::AddBombs(float dt)
 	}
 }
 
-void GameScene::UpdateScore(float dt)
-{ 
-	m_score += 10;
+void GameScene::IncrementScore(float dt)
+{
+	(void)dt;
+
+	m_score += C_SCORE_INC;
 }
 
 void GameScene::InitAudio()
@@ -157,6 +162,8 @@ void GameScene::InitAudio()
 
 bool GameScene::ExplodeBombs(cocos2d::Touch* touch, cocos2d::Event* event)
 {
+	(void)event;
+
 	Vec2 touchLocation = touch->getLocation();
 	cocos2d::Vector<cocos2d::Sprite*> toErase;
 	for (auto bomb : m_bombs)
@@ -165,17 +172,22 @@ bool GameScene::ExplodeBombs(cocos2d::Touch* touch, cocos2d::Event* event)
 		{
 			auto explosion = ParticleExplosion::create();
 			explosion->setDuration(0.25f);
+
 			SimpleAudioEngine::getInstance()->playEffect("bomb.mp3");
+
 			explosion->setTotalParticles(800);
 			explosion->setSpeed(3.5f);
 			explosion->setLife(300.0f);
 			explosion->setPosition(bomb->getPosition());
+
 			this->addChild(explosion);
 			bomb->setVisible(false);
-			this->removeChild(bomb);
+
 			toErase.pushBack(bomb);
+			this->removeChild(bomb);
 		}
 	}
+
 	for (auto bomb : toErase)
 	{
 		m_bombs.eraseObject(bomb);

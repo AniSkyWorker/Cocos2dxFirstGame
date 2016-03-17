@@ -7,7 +7,7 @@ class GameScene : public cocos2d::Layer
 {
 public:
     static cocos2d::Scene* createScene();
-    virtual bool init();
+    virtual bool init() override;
 
     CREATE_FUNC(GameScene);
 
@@ -26,10 +26,9 @@ public:
 	void AddBombs(float dt);
 	bool ExplodeBombs(cocos2d::Touch* touch, cocos2d::Event* event);
 
-	void UpdateScore(float dt);
+	void IncrementScore(float dt);
 	void PauseCallback(cocos2d::Ref* pSender);
-	void MoveFinished(cocos2d::Node* sender);
-	
+		
 private:
 	cocos2d::Sprite* m_playerSpr;
 	cocos2d::Size m_visibleSize;

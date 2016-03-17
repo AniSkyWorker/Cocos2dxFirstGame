@@ -34,6 +34,8 @@ bool Pause::init()
 
 void Pause::ExitPause(cocos2d::Ref* pSender)
 {
+	(void)pSender;
+
 	Director::getInstance()->popScene();
 }
 
